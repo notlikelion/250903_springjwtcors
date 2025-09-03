@@ -34,4 +34,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     private final JwtUtil jwtUtil;
+
+    // Bearer <- Header. Authorization.
+    private final String AUTHORIZATION_HEADER = "Authorization";
+    private final String BEARER_PREFIX = "Bearer ";
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            // substring(앞[포함], [뒤[불포함]])
+//            return bearerToken.substring(7);
+            // 123456789
+            // .substring(7) -> 89
+            return bearerToken.substring(BEARER_PREFIX.length());
+        }
+        return null;
+    }
 }
