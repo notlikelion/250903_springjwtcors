@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+// @CrossOrigin // [1] 이렇게 풀수도 있긴한데...
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

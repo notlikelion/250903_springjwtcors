@@ -19,6 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -43,10 +48,23 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(userDetails);
     }
 
+    @Bean // [2]
+    public CorsConfigurationSource configurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowedOrigins(List.of("*"));
+        config.setAllowedOrigins(List.of("http://127.0.0.1:5500"));
+//        config.setAllowedMethods(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
+        config.setAllowCredentials(true); // 자격증명 -> 쿠키, 헤더 등 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config); // 모든 경로에 대해서 CORS
+        return source;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // TODO : CORS
-//        http.cors
+        http.cors(cors -> cors.configurationSource(configurationSource()));
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.formLogin(AbstractHttpConfigurer::disable);
